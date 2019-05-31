@@ -1,0 +1,36 @@
+{
+  "name": "react-cmder",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ToanVQ <hunter9xbn@gmail.com>",
+  "license": "MIT",
+  "bin": {
+    "react-cmder": "./index.js"
+  },
+  "dependencies": {
+    "@types/react-redux": "^7.0.9",
+    "@types/react-router-dom": "^4.3.3",
+    "chalk": "^2.4.2",
+    "create-react-app": "^3.0.1",
+    "cross-spawn": "^6.0.5",
+    "fs-extra": "^8.0.1",
+    "inquirer": "^6.3.1",
+    "node-sass": "^4.12.0",
+    "react-redux": "^7.0.3",
+    "react-router-dom": "^5.0.0",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.2",
+    "redux-thunk": "^2.3.0"
+  },
+  "devDependencies": {
+    "@cr4zyc4t/eslint-config-common": "^1.0.4",
+    "eslint": "^5.16.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.13.0"
+  }
+}
