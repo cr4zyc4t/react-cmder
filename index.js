@@ -64,26 +64,26 @@ async function start() {
         // },
       ],
     },
-    {
-      name: "reduxConfig",
-      when: answers => answers.features.includes("redux"),
-      type: "checkbox",
-      message: "Middleware for handling side-effect:",
-      description: "Middleware for handling side-effect in redux",
-      choices: [
-        {
-          name: "Redux Thunk",
-          value: "thunk",
-          short: "Thunk",
-        },
-        {
-          name: "Redux Saga",
-          value: "saga",
-          short: "Saga",
-          checked: true,
-        },
-      ],
-    },
+    // {
+    //   name: "reduxConfig",
+    //   when: answers => answers.features.includes("redux"),
+    //   type: "checkbox",
+    //   message: "Middleware for handling side-effect:",
+    //   description: "Middleware for handling side-effect in redux",
+    //   choices: [
+    //     {
+    //       name: "Redux Thunk",
+    //       value: "thunk",
+    //       short: "Thunk",
+    //     },
+    //     {
+    //       name: "Redux Saga",
+    //       value: "saga",
+    //       short: "Saga",
+    //       checked: true,
+    //     },
+    //   ],
+    // },
     {
       name: "eslintConfig",
       when: answers => answers.features.includes("linter"),
@@ -123,7 +123,6 @@ async function start() {
 
   const {
     appDir,
-    appSrc,
     useYarn,
     useTS,
     packagePath,
@@ -148,30 +147,46 @@ async function start() {
     packageJson.eslintConfig.extends = ["react-app", "@cr4zyc4t/common", "@cr4zyc4t/common/import", "@cr4zyc4t/common/react"];
   }
 
+  if (answers.features.includes("redux") || answers.features.includes("router")) {
+    if (useTS) {
+      fs.copySync(path.join(__dirname, "templates/base-ts"), appDir);
+    } else {
+      fs.copySync(path.join(__dirname, "templates/base"), appDir);
+    }
+  }
+
   if (answers.features.includes("redux")) {
-    additionalPkgs.push("redux", "react-redux");
+    additionalPkgs.push("redux", "react-redux", "redux-thunk", "redux-saga");
     if (useTS) {
       additionalPkgs.push("@types/react-redux");
 
-      fs.copySync(path.join(__dirname, "templates/redux-ts"), appSrc);
+      fs.copySync(path.join(__dirname, "templates/redux-ts"), appDir);
     } else {
-      fs.copySync(path.join(__dirname, "templates/redux"), appSrc);
+      fs.copySync(path.join(__dirname, "templates/redux"), appDir);
     }
-    if (answers.reduxConfig.includes("thunk")) {
-      additionalPkgs.push("redux-thunk");
-    }
-    if (answers.reduxConfig.includes("saga")) {
-      additionalPkgs.push("redux-saga");
-    }
+    // if (answers.reduxConfig.includes("thunk")) {
+    //   additionalPkgs.push("redux-thunk");
+    // }
+    // if (answers.reduxConfig.includes("saga")) {
+    //   additionalPkgs.push("redux-saga");
+    // }
   }
 
   if (answers.features.includes("router")) {
     additionalPkgs.push("react-router-dom");
     if (useTS) {
       additionalPkgs.push("@types/react-router-dom");
-      fs.copySync(path.join(__dirname, "templates/router-ts"), appSrc);
+      fs.copySync(path.join(__dirname, "templates/router-ts"), appDir);
     } else {
-      fs.copySync(path.join(__dirname, "templates/router"), appSrc);
+      fs.copySync(path.join(__dirname, "templates/router"), appDir);
+    }
+  }
+
+  if (answers.features.includes("redux") && answers.features.includes("router")) {
+    if (useTS) {
+      fs.copySync(path.join(__dirname, "templates/redux-router-ts"), appDir);
+    } else {
+      fs.copySync(path.join(__dirname, "templates/redux-router"), appDir);
     }
   }
 
