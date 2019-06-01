@@ -1,13 +1,30 @@
 {
   "name": "react-cmder",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.1.2",
+  "description": "CLI for creating react template",
   "main": "index.js",
+  "directories": {
+    "example": "example",
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cr4zyc4t/react-cmder.git"
+  },
+  "keywords": [
+    "react",
+    "cli",
+    "template"
+  ],
+  "author": "ToanVQ <hunter9xbn@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cr4zyc4t/react-cmder/issues"
+  },
+  "homepage": "https://github.com/cr4zyc4t/react-cmder#readme",
   "scripts": {
     "prepublishOnly": "node ./lib/cleanup.js && node ./lib/ts2js.js"
   },
-  "author": "ToanVQ <hunter9xbn@gmail.com>",
-  "license": "MIT",
   "bin": {
     "react-cmder": "./index.js"
   },
