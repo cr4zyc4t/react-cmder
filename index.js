@@ -2,7 +2,8 @@
 
 const spawn = require("cross-spawn");
 const inquirer = require("inquirer");
-const fs = require("fs");
+const fs = require("fs-extra");
+const path = require("path");
 const { getProjectInfo } = require("./utils");
 
 const craPath = require.resolve("create-react-app");
@@ -13,7 +14,7 @@ async function start() {
       name: "features",
       type: "checkbox",
       message: "Check the features needed for your project:",
-      pageSize: 5,
+      pageSize: 10,
       choices: [
         {
           name: "TypeScript",
@@ -34,10 +35,9 @@ async function start() {
           checked: true,
         },
         {
-          name: "CSS Pre-processors",
+          name: "CSS Pre-processors (SASS/SCSS)",
           value: "css-preprocessor",
           description: "Add support for CSS pre-processors like Sass, Less or Stylus",
-          checked: true,
         },
         {
           name: "Linter / Formatter",
@@ -123,6 +123,7 @@ async function start() {
 
   const {
     appDir,
+    appSrc,
     useYarn,
     useTS,
     packagePath,
@@ -138,7 +139,6 @@ async function start() {
     packageJson.scripts.lint = "eslint 'src'";
   }
 
-
   if (answers.features.includes("css-preprocessor")) {
     additionalPkgs.push("node-sass");
   }
@@ -152,6 +152,10 @@ async function start() {
     additionalPkgs.push("redux", "react-redux");
     if (useTS) {
       additionalPkgs.push("@types/react-redux");
+
+      fs.copySync(path.join(__dirname, "templates/redux-ts"), appSrc);
+    } else {
+      fs.copySync(path.join(__dirname, "templates/redux"), appSrc);
     }
     if (answers.reduxConfig.includes("thunk")) {
       additionalPkgs.push("redux-thunk");
@@ -165,6 +169,9 @@ async function start() {
     additionalPkgs.push("react-router-dom");
     if (useTS) {
       additionalPkgs.push("@types/react-router-dom");
+      fs.copySync(path.join(__dirname, "templates/router-ts"), appSrc);
+    } else {
+      fs.copySync(path.join(__dirname, "templates/router"), appSrc);
     }
   }
 
@@ -179,7 +186,7 @@ async function start() {
   // Install additional packages
   if (additionalPkgs.length > 0) {
     if (useYarn) {
-      spawn(
+      spawn.sync(
         "yarn",
         ["add"].concat(additionalPkgs),
         {
@@ -188,7 +195,7 @@ async function start() {
         }
       );
     } else {
-      spawn(
+      spawn.sync(
         "npm",
         ["install"].concat(additionalPkgs),
         {
