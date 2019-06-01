@@ -3,7 +3,7 @@
 const spawn = require("cross-spawn");
 const inquirer = require("inquirer");
 const fs = require("fs");
-const { getProjectInfo, shellescape } = require("./utils");
+const { getProjectInfo } = require("./utils");
 
 const craPath = require.resolve("create-react-app");
 
@@ -31,11 +31,13 @@ async function start() {
           name: "Redux",
           value: "redux",
           description: "Manage the app state with a centralized store",
+          checked: true,
         },
         {
           name: "CSS Pre-processors",
           value: "css-preprocessor",
           description: "Add support for CSS pre-processors like Sass, Less or Stylus",
+          checked: true,
         },
         {
           name: "Linter / Formatter",
@@ -43,6 +45,14 @@ async function start() {
           short: "Linter",
           description: "Check and enforce code quality with ESLint or Prettier",
           plugins: ["eslint"],
+          checked: true,
+        },
+        {
+          name: "Analyzing the Bundle Size",
+          value: "analyze",
+          short: "Analyze",
+          description: "Analyzing the Bundle Size with Source Map Explorer",
+          plugins: ["source-map-explorer"],
           checked: true,
         },
         // {
@@ -100,17 +110,19 @@ async function start() {
     craArgv.push("--typescript");
   }
 
-  // const result = spawn.sync(
-  //   "node",
-  //   [craPath].concat(craArgv),
-  //   { stdio: "inherit" }
-  // );
+  // TODO: uncomment this
+  const result = spawn.sync(
+    "node",
+    [craPath].concat(craArgv),
+    { stdio: "inherit" }
+  );
 
-  // if (result.status !== 0) {
-  //   process.exit(result.status);
-  // }
+  if (result.status !== 0) {
+    process.exit(result.status);
+  }
 
   const {
+    appDir,
     useYarn,
     useTS,
     packagePath,
@@ -119,13 +131,23 @@ async function start() {
   const packageJson = require(packagePath);
   const additionalPkgs = [];
 
+  // add lint script
+  if (useTS) {
+    packageJson.scripts.lint = "eslint 'src' --ext .ts --ext .tsx";
+  } else {
+    packageJson.scripts.lint = "eslint 'src'";
+  }
+
+
   if (answers.features.includes("css-preprocessor")) {
     additionalPkgs.push("node-sass");
   }
+
   if (answers.features.includes("linter") && answers.eslintConfig === "stricly") {
     additionalPkgs.push("@cr4zyc4t/eslint-config-common");
     packageJson.eslintConfig.extends = ["react-app", "@cr4zyc4t/common", "@cr4zyc4t/common/import", "@cr4zyc4t/common/react"];
   }
+
   if (answers.features.includes("redux")) {
     additionalPkgs.push("redux", "react-redux");
     if (useTS) {
@@ -138,6 +160,7 @@ async function start() {
       additionalPkgs.push("redux-saga");
     }
   }
+
   if (answers.features.includes("router")) {
     additionalPkgs.push("react-router-dom");
     if (useTS) {
@@ -145,19 +168,33 @@ async function start() {
     }
   }
 
+  if (answers.features.includes("analyze")) {
+    additionalPkgs.push("source-map-explorer");
+    packageJson.scripts.analyze = "source-map-explorer 'build/static/js/*.js'";
+  }
+
+  // Write package.json
   fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2), "utf8");
+
+  // Install additional packages
   if (additionalPkgs.length > 0) {
     if (useYarn) {
       spawn(
         "yarn",
         ["add"].concat(additionalPkgs),
-        { stdio: "inherit" }
+        {
+          stdio: "inherit",
+          cwd: appDir,
+        }
       );
     } else {
       spawn(
         "npm",
         ["install"].concat(additionalPkgs),
-        { stdio: "inherit" }
+        {
+          stdio: "inherit",
+          cwd: appDir,
+        }
       );
     }
   }

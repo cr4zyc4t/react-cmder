@@ -1,5 +1,3 @@
-import { Dispatch } from "redux";
-
 export const INCREASE = "@counter/increase";
 export const increase = (value: number) => ({
   type: INCREASE,
@@ -7,6 +5,7 @@ export const increase = (value: number) => ({
     value,
   },
 });
+export type IncreaseAction = ReturnType<typeof increase>;
 
 export const DECREASE = "@counter/decrease";
 export const decrease = (value: number) => ({
@@ -15,9 +14,4 @@ export const decrease = (value: number) => ({
     value,
   },
 });
-
-export const asyncIncrease = (value: number) => (dispatch: Dispatch) => {
-  setTimeout(() => {
-    dispatch(increase(value));
-  }, 1000);
-};
+export type DecreaseAction = ReturnType<typeof decrease>;

@@ -1,27 +1,27 @@
-import React from "react";
+import React, { SyntheticEvent, useCallback } from "react";
 
-import logo from "./logo.svg";
-import "./App.css";
-import Counter from "./components/Counter";
+import s from "./App.module.css";
+
+import Section from "components/Section";
+import Counter from "components/Counter";
 
 export default function App() {
+  const inputHandler = useCallback((e: SyntheticEvent) => {
+    const { value } = (e.target as HTMLInputElement);
+    console.log("inputHandler -> value", value);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div className={s["app"]}>
+      <div className={s["header"]}>
+        <div className={s["nav"]}>
+          <a href="/" className={s["active"]}>Counter</a>
+        </div>
+        <input className={s["search-input"]} type="search" placeholder="Search..." onInput={inputHandler} />
+      </div>
+      <Section>
         <Counter />
-      </header>
+      </Section>
     </div>
   );
-};
+}

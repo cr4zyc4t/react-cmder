@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 
-import { increase, decrease, asyncIncrease } from "../../actions/counter";
-import { AppState } from "../../store/reducers";
+import { increase, decrease } from "actions/counter";
+import { AppState } from "store/reducers";
 
 import Counter from "./Counter";
 
@@ -12,14 +12,8 @@ const mapStateToProps = (state: AppState) => ({
 const mapDispatchToProps = {
   increase,
   decrease,
-  asyncIncrease,
 };
 
-export interface CounterProps {
-  counter: number;
-  increase: (value: number) => void;
-  decrease: (value: number) => void;
-  asyncIncrease: (value: number) => void;
-}
+export type CounterProps = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Counter);

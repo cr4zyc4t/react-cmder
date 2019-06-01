@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container button {
+  background-color: #fff;
+  padding: 8px;
+  border: solid 1px rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  outline: none;
+  margin: 0px 8px;
+}
